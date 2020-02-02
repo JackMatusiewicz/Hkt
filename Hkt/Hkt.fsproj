@@ -6,7 +6,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Program.fs"/>
+        <Compile Include="Program.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="TeqCrate" Version="0.1.3" />
+      <PackageReference Include="TypeEquality" Version="0.3.0" />
     </ItemGroup>
 
 </Project>
