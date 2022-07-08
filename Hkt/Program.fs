@@ -1,10 +1,10 @@
-﻿// Learn more about F# at http://fsharp.org
-
-open Hkt
+﻿open Hkt
 
 [<EntryPoint>]
-let main argv =
-    let xs = [ 1 .. 10 ]
-    let result = Arrow.fold Arrow.rev [] xs
-    printfn "%A" result
+let main _ =
+    let v = BinaryTree.Branch (BinaryTree.Leaf 1, 2, BinaryTree.Leaf 3)
+    let u = RoseTree.Branch [RoseTree.Leaf 1 ; RoseTree.Leaf 2 ; RoseTree.Leaf 3]
+
+    printfn "%A" <| Functor.tupleUp (BinaryTreeFunctor ()) v
+    printfn "%A" <| Functor.tupleUp (RoseTreeFunctor ()) u
     0

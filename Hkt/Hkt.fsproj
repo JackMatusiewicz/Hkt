@@ -6,7 +6,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Arrow.fs" />
+        <Compile Include="Domain.fs" />
+        <Compile Include="BinaryTree.fs" />
+        <Compile Include="RoseTree.fs" />
+        <Compile Include="Functor.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
