@@ -2,9 +2,15 @@
 
 [<EntryPoint>]
 let main _ =
-    let v = BinaryTree.Branch (BinaryTree.Leaf 1, 2, BinaryTree.Leaf 3)
-    let u = RoseTree.Branch [RoseTree.Leaf 1 ; RoseTree.Leaf 2 ; RoseTree.Leaf 3]
-
-    printfn "%A" <| Functor.tupleUp (BinaryTreeFunctor ()) v
-    printfn "%A" <| Functor.tupleUp (RoseTreeFunctor ()) u
+    let v = BinaryTree.Branch (BinaryTree.Leaf 1, 2, BinaryTree.Leaf 99)
+    let freeV = Free.liftFree (BinaryTreeFunctor ()) v
+    let sum =
+        Free.foldFree
+            (BinaryTreeFunctor ())
+            (fun v ->
+                v :?> int BinaryTree
+                |> BinaryTree.fold id (fun a l r -> a + l + r)
+            )
+            freeV
+    printfn "%d" sum
     0

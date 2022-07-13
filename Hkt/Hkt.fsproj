@@ -10,6 +10,7 @@
         <Compile Include="BinaryTree.fs" />
         <Compile Include="RoseTree.fs" />
         <Compile Include="Functor.fs" />
+        <Compile Include="Free.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
