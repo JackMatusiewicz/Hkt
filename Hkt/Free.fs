@@ -2,10 +2,13 @@ namespace Hkt
 
 type FreeMonadBrand = class end
 
+type FreeBrand<'f> = interface end
+
 // A type representing the free monad.
 type Free<'f, 'a, 'x when 'x :> Application<'f, 'a>> =
     | Pure of 'a
-    | Join of Application<'f, Free<'f, 'a, 'x>>    
+    | Join of Application<'f, Free<'f, 'a, 'x>>
+    interface Application<FreeBrand<'f>, 'a>
 
 module Free =
 
@@ -41,3 +44,27 @@ module Free =
         | Join ffa ->
             functor.Map ffa (foldFree functor fold)
             |> fold
+
+    let rec map
+        (functor : Functor<'f>)
+        (f : 'a -> 'b)
+        (v : Free<'f, 'a, Application<'f, 'a>>)
+        : Free<'f, 'b, Application<'f, 'b>>
+        =
+        match v with
+        | Pure a -> f a |> Pure
+        | Join ffa ->
+            functor.Map ffa (map functor f)
+            |> Join
+
+type FreeFunctor<'f, 'free when 'free :> FreeBrand<'f>>(fFunctor : Functor<'f>) =
+    interface Functor<'free> with
+        member this.Map<'a, 'b> v (f : 'a -> 'b) =
+            let v = v
+                :?> Application<FreeBrand<'f>, 'a>
+                :?> Free<'f, 'a, Application<'f, 'a>>
+
+            Free.map fFunctor f v
+            :> Application<FreeBrand<'f>, 'b>
+            :?> Application<'free, 'b>
+        
