@@ -55,7 +55,7 @@ module Free =
             functor.Map ffa (map functor f)
             |> Join
 
-    let bind<'f, 'a, 'b, 'free when 'free :> FreeBrand<'f>>
+    let bind<'f, 'a, 'b>
         (innerFunctor : Functor<'f>)
         (f : 'a -> Free<'f, 'b, Application<'f, 'b>>)
         (v : Free<'f, 'a, Application<'f, 'a>>)
