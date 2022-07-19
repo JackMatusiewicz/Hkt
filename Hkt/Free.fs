@@ -1,5 +1,7 @@
 namespace Hkt
 
+open Hkt
+
 type FreeBrand<'f> = interface end
 
 // A type representing the free monad.
@@ -72,4 +74,29 @@ type FreeFunctor<'f, 'free when 'free :> FreeBrand<'f>>(fFunctor : Functor<'f>) 
 
             Free.map fFunctor f v
             :> Application<FreeBrand<'f>, 'b>
-            :?> Application<'free, 'b> 
+            :?> Application<'free, 'b>
+
+type FreeMonad<'f, 'free when 'free :> FreeBrand<'f>> (fFunctor : Functor<'f>) =
+    // I believe this is how the implementation of typeclass inheritance is in Haskell.
+    // A child typeclass with have an instance of the parent's dictionary inside itself.
+    let freeFunctor = FreeFunctor(fFunctor)
+
+    interface Monad<'free> with
+        member _.Bind<'a, 'b> (f : 'a -> Application<'free, 'b>) v =
+            Free.bind
+                fFunctor
+                (fun v ->
+                    f v
+                    :?> Application<FreeBrand<'f>, 'b>
+                    :?> Free<'f, 'b, Application<'f, 'b>>
+                )
+                (v :?> Application<FreeBrand<'f>, 'a> :?> Free<'f, 'a, Application<'f, 'a>>)
+            :> Application<FreeBrand<'f>, 'b>
+            :?> Application<'free, 'b>
+
+        member _.Map a b = (freeFunctor :> Functor<'free>).Map a b
+
+        member _.Pure a =
+            Free.Pure a
+            :> Application<FreeBrand<'f>, 'a>
+            :?> Application<'free, 'a>
